@@ -1,0 +1,14 @@
+{
+  "name": "gym-count",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@capacitor/android": "^8.3.2",
+    "@capacitor/core": "^8.3.2",
+    "@capacitor/filesystem": "^8.0.0",
+    "@capacitor/share": "^8.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.3.2"
+  }
+}
