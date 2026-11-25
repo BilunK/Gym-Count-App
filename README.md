@@ -1,6 +1,6 @@
 # Gym Count
 
-App de Android para llevar el control de tus entrenamientos de gimnasio: planificas tu rutina de lunes a domingo, vas contando series durante el entreno, apuntas cómo te has sentido y sigues tu progreso. Todo es sencillo, rápido de usar con una mano y **se guarda solo en tu móvil**.
+Estaba cansado de que en mitad de una serie, me quedara pensando "¿Esta es la segunda o tercera serie?", por eso hice esta App, para no tener que estar pensando en eso y centrarme en el ejercicio al completo, con esta aplicación podrás llevar el control de tus entrenamientos de gimnasio: planificas tu rutina de lunes a domingo, vas contando series durante el entreno, apuntas cómo te has sentido y sigues tu progreso. Todo es sencillo, rápido de usar con una mano y **se guarda solo en tu móvil**.
 
 > Hecho por Miguel Palarea García
 
