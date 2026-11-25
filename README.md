@@ -98,28 +98,4 @@ Español, inglés, francés, alemán, portugués e italiano. La app usa el idiom
 └── .github/workflows/android.yml  Compilación automática del APK
 ```
 
-## Compilar el APK
-
-**Con GitHub (sin instalar nada):**
-1. Sube estos archivos a un repositorio de tu cuenta.
-2. Entra en **Actions → Compilar APK → Run workflow**. Tarda unos 5–10 minutos.
-3. El APK queda en **Releases** (y también como *artifact* de la ejecución).
-
-**En tu ordenador** (necesitas Node 22, Java 21 y el SDK de Android):
-```bash
-npm install
-npx cap add android
-cp -r icono/res/. android/app/src/main/res/
-npx cap sync android
-cd android && ./gradlew assembleDebug
-```
-El archivo resultante está en `android/app/build/outputs/apk/debug/app-debug.apk`.
-
-## Limitaciones
-
-- Es un APK de depuración, pensado para uso personal. Para publicarla en la Play Store haría falta una versión firmada (AAB).
-- Solo Android. No hay versión para iPhone.
-
----
-
 Hecho por **Miguel Palarea García**
