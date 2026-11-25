@@ -18,9 +18,14 @@ jobs:
           java-version: 21
       - run: npm install
       - run: npx cap add android
-      - name: Icono de la app
+      - name: Icono y pantalla de inicio
         run: |
-          if [ -d icono/res ]; then cp -r icono/res/. android/app/src/main/res/; fi
+          R=android/app/src/main/res
+          if [ -d icono/res ]; then cp -r icono/res/. $R/; fi
+          sed -i 's#@drawable/splash#@color/gc_bg#' $R/values/styles.xml
+          sed -i '/name="AppTheme.NoActionBarLaunch"/a\        <item name="windowSplashScreenAnimatedIcon">@drawable/gc_splash_icon</item>' $R/values/styles.xml
+          sed -i '/name="AppTheme.NoActionBarLaunch"/a\        <item name="windowSplashScreenBackground">@color/gc_bg</item>' $R/values/styles.xml
+          sed -i '/name="AppTheme.NoActionBar"/a\        <item name="android:windowBackground">@color/gc_bg</item>' $R/values/styles.xml
       - run: npx cap sync android
       - run: chmod +x gradlew && ./gradlew assembleDebug
         working-directory: android
