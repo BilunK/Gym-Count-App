@@ -129,15 +129,32 @@ const wd=d=>(d.getDay()+6)%7;
 const MO=[{e:'😣',t:'Horrible',c:'#ff3b30'},{e:'🙁',t:'Mal',c:'#ff9500'},{e:'😐',t:'Regular',c:'#ffcc00'},{e:'🙂',t:'Bien',c:'#7bd45a'},{e:'🤩',t:'Excelente',c:'#34c759'}];
 
 
-let S=null;
-try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
-if(!S||!S.routine)S={routine:{0:[
+const dn=k=>Date.UTC(+k.slice(0,4),+k.slice(5,7)-1,+k.slice(8,10))/864e5;
+const dk=n=>new Date(n*864e5).toISOString().slice(0,10);
+const ld=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}};
+const unpack=o=>({mus:o.mus,units:o.units,routine:o.routine,log:{},
+  days:Object.fromEntries((o.days||[]).map(([n,m,t,it])=>[dk(n),{mood:m,note:t||'',ex:it.map(([i,...d])=>{const f=o.defs[i];return{n:f[0],m:f[1],u:f[2],s:f[3],r:f[4],d}})}])),
+  marks:(o.marks||[]).map(([id,name,type,muscle,h])=>({id,name,type,muscle,hist:h.map(([n,v])=>({d:dk(n),v}))}))});
+const unlog=o=>Object.fromEntries(Object.entries(o||{}).map(([n,v])=>[dk(+n),Object.fromEntries(Object.entries(v).map(([i,x])=>[i,{done:x}]))]));
+let S=(()=>{let x=null;const a=ld('gc:data'),o=ld('gymcount:v1');
+  if(a&&a.days){x=unpack(a);x.log=unlog(ld('gc:log'))}
+  else if(o&&o.routine)x={routine:o.routine,mus:o.mus,units:o.units,marks:o.marks,log:{},days:{},theme:o.theme,ac:o.ac,fs:o.fs,_old:o};
+  return x||{routine:{0:[
   {id:uid(),name:'Press banca',muscle:'d0',sets:4,reps:10},
   {id:uid(),name:'Sentadillas',muscle:'d2',sets:4,reps:10},
-  {id:uid(),name:'Core',muscle:'d6',sets:4,reps:15}]},log:{}};
-S.theme=S.theme||'auto';S.days=S.days||{};S.ac=S.ac||'blue';S.fs=S.fs||1;
-
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+  {id:uid(),name:'Core',muscle:'d6',sets:4,reps:15}]},log:{},days:{}}})();
+Object.assign(S,ld('gc:ui')||{});S.days=S.days||{};S.log=S.log||{};S.theme=S.theme||'auto';S.ac=S.ac||'blue';S.fs=S.fs||1;
+const pack=()=>{const defs=[],ix={},P=o=>{const t=[o.n,o.m,o.u,o.s,o.r],j=JSON.stringify(t);if(!(j in ix)){ix[j]=defs.length;defs.push(t)}return ix[j]};
+  return{v:3,mus:S.mus,units:S.units,routine:S.routine,
+    days:Object.keys(S.days).sort().map(k=>{const d=S.days[k];return[dn(k),d.mood,d.note||0,d.ex.map(o=>[P(o),...o.d])]}),
+    defs,marks:S.marks.map(m=>[m.id,m.name,m.type,m.muscle,m.hist.map(h=>[dn(h.d),h.v])])}};
+const packLog=()=>{const o={};for(const k in S.log){const e={};for(const i in S.log[k]){const v=S.log[k][i].done;if(v>0)e[i]=v}if(Object.keys(e).length)o[dn(k)]=e}return o};
+const _c={};let _t=0,_off=0;
+const put=(k,v)=>{const t=JSON.stringify(v);if(_c[k]!==t){try{localStorage.setItem(k,t);_c[k]=t}catch(e){}}};
+const saveLog=()=>put('gc:log',packLog());
+const flush=()=>{if(_off)return;clearTimeout(_t);_t=0;put('gc:data',pack());saveLog();put('gc:ui',{theme:S.theme,ac:S.ac,fs:S.fs});try{localStorage.removeItem('gymcount:v1')}catch(e){}};
+const save=()=>{clearTimeout(_t);_t=setTimeout(flush,300)};
+addEventListener('pagehide',flush);document.addEventListener('visibilitychange',()=>{if(document.hidden)flush()});
 
 function theme(){
   const r=document.documentElement;
@@ -196,7 +213,7 @@ function prog(){
 $('moods').innerHTML=MO.map((m,i)=>`<button data-m='${i+1}'><span>${m.e}</span>${D.mo[i]}</button>`).join('');
 
 
-$('unc').onclick=()=>{delete S.days[key(cur)];save();$('ov').hidden=true;today()};
+
 $('cancel').onclick=()=>{$('ov').hidden=true};
 $('ov').onclick=ev=>{if(ev.target===$('ov'))$('ov').hidden=true};
 document.onkeydown=ev=>{if(ev.key==='Escape')$('ov').hidden=true};
@@ -231,12 +248,7 @@ const insts=l=>l.flatMap(e=>Array.from({length:e.count||1},(_,i)=>({e,i,k:i?e.id
 const num=s=>{const v=parseFloat(String(s).replace(',','.'));return isNaN(v)?null:v};
 
 
-$('list').onclick=ev=>{const b=ev.target.closest('button');if(!b||b.disabled)return;
-  const x=insts(S.routine[wd(cur)]||[]).find(x=>x.k===b.dataset.id);if(!x)return;
-  const lg=S.log[key(cur)]=S.log[key(cur)]||{},l=lg[x.k]=lg[x.k]||{done:0};l.done=Math.min(l.done||0,x.e.sets);
-  if(b.dataset.a==='p'&&l.done<x.e.sets){l.done++;pulse={id:x.k,i:l.done-1}}
-  if(b.dataset.a==='m')l.done=Math.max(0,l.done-1);
-  if(S.days[key(cur)])Object.assign(S.days[key(cur)],snap());save();today();pulse=null};
+
 
 function routine(){
   $('chips').innerHTML=SH.map((s,i)=>`<button class='${i===rd?'on':''}' data-d='${i}'>${s}</button>`).join('');
@@ -251,9 +263,7 @@ $('rl').oninput=ev=>{const t=ev.target,row=t.closest('.ex');if(!row)return;
   if(f==='muscle')row.querySelector('.nm').placeholder=mname(e.muscle);save()};
 $('add').onclick=()=>{S.routine[rd].push({id:uid(),name:'',muscle:S.mus[0]?S.mus[0].id:'',sets:4,reps:10,unit:S.units[0].id,count:1});save();routine();const n=document.querySelectorAll('.ex .nm');n[n.length-1].focus()};
 
-function hist(){const ks=Object.keys(S.days).sort().reverse();
-  $('hl').innerHTML=ks.length?ks.map(k=>{const d=S.days[k],m=MO[d.mood-1],dt=new Date(k+'T12:00:00');
-    return `<button class='card hrow' data-k='${k}'><div class='hd'><b>${fmt(dt)}</b><small>${DAYS[wd(dt)]}</small></div><div class='hm'><span class='mj' style='background:${m.c}33'>${m.e}</span>${D.mo[d.mood-1]}</div><div class='hx'>${d.done}/${d.total} ${D.sr}${d.ex.length?': '+esc(d.ex.join(', ')):''}</div>${d.note?`<div class='hx nt'>${esc(d.note)}</div>`:''}</button>`}).join(''):EMP}
+
 
 document.body.insertAdjacentHTML('beforeend',"<div class='ov' id='ov2' hidden><div class='sheet' id='bx' role='dialog' aria-modal='true'></div></div>");
 const dlg=h=>{$('bx').innerHTML=h;$('ov2').hidden=false},cls=()=>{$('ov2').hidden=true};
@@ -268,7 +278,7 @@ const mkSel=()=>{document.querySelectorAll('#moods button').forEach(b=>b.classLi
 function openMood(){const c=S.days[key(cur)];pm=c?c.mood:0;$('nt').value=(c&&c.note)||'';$('sd').textContent=fmt(cur)+', '+DAYS[wd(cur)];mkSel();$('unc').hidden=!c;$('ov').hidden=false}
 $('comp').onclick=openMood;
 $('moods').onclick=ev=>{const b=ev.target.closest('[data-m]');if(b){pm=+b.dataset.m;mkSel()}};
-$('sv').onclick=()=>{const o=Object.assign({mood:pm},snap()),t=$('nt').value.trim();if(t)o.note=t;S.days[key(cur)]=o;save();$('ov').hidden=true;today()};
+
 
 $('settings').insertAdjacentHTML('beforeend',`<details class='group adv' style='margin-top:14px'><summary>${D.av}</summary><div class='lbl'>${D.mg2}</div><div id='me'></div><button class='alt' id='ma'>${D.ma}</button><div class='lbl' style='margin-top:18px'>${D.un2}</div><div id='ue'></div><button class='alt' id='ua'>${D.ua}</button><div class='lbl' style='margin-top:18px'>${D.dt}</div><button class='alt' id='xp' style='margin-top:0'>${D.xp}</button><button class='alt' id='ip'>${D.ip}</button><input type='file' id='fi' accept='text/plain,.txt' hidden><button class='alt red' id='rs' style='margin-top:18px'>${D.rst}</button></details>`);
 const rme=()=>{$('me').innerHTML=S.mus.map((m,i)=>`<div class='er' data-i='${i}'><button data-m='u'${i?'':' disabled'}>↑</button><button data-m='d'${i<S.mus.length-1?'':' disabled'}>↓</button><input value='${esc(mn(m))}'><button data-m='x'>×</button></div>`).join('')};
@@ -280,17 +290,14 @@ $('ue').onclick=ev=>{const b=ev.target.closest('[data-m]');if(!b||b.disabled)ret
 $('ue').oninput=ev=>{S.units[+ev.target.closest('.er').dataset.i].n=ev.target.value;save()};
 $('ua').onclick=()=>{S.units.push({id:'c'+uid(),n:D.ut});save();rue()};
 
-$('xp').onclick=async()=>{
-  const txt=JSON.stringify({app:'gymcount',v:2,data:S},null,1),fn='gym-count-backup.txt',P=(window.Capacitor&&Capacitor.Plugins)||{};
+$('xp').onclick=async()=>{flush();
+  const txt=JSON.stringify(Object.assign({app:'gymcount'},pack(),{log:packLog()})),fn='gym-count-backup.txt',P=(window.Capacitor&&Capacitor.Plugins)||{};
   try{if(P.Filesystem&&P.Share){const r=await P.Filesystem.writeFile({path:fn,data:txt,directory:'CACHE',encoding:'utf8'});await P.Share.share({title:fn,url:r.uri});return}}
   catch(e){if(/cancel/i.test((e&&e.message)||''))return}
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain'}));a.download=fn;document.body.appendChild(a);a.click();a.remove()};
 $('ip').onclick=()=>$('fi').click();
-$('fi').onchange=()=>{const f=$('fi').files[0];if(!f)return;const r=new FileReader();
-  r.onload=()=>{let d;try{d=JSON.parse(r.result);if(d.app!=='gymcount'||!d.data.routine)throw 0}catch(e){alert(D.ie);return}
-    ask(D.iq,D.ix,D.ik,()=>{localStorage.setItem(KEY,JSON.stringify(d.data));location.reload()},1)};
-  r.readAsText(f);$('fi').value=''};
-$('rs').onclick=()=>ask(D.rq,D.rx,D.bd,()=>ask(D.rs2,D.rx2,D.bd,()=>{try{localStorage.removeItem(KEY)}catch(e){}location.reload()},1),1);
+
+
 
 $('settings').insertAdjacentHTML('beforebegin',`<section id='marks' hidden><h2>${D.mk}</h2><div class='chs' id='mf'></div><div class='mbar' id='mb' hidden></div><div class='mgrid' id='mg'></div><button class='fab' id='fab' aria-label='+'>+</button></section>`);
 $('nav').querySelector('[data-v=hist]').insertAdjacentHTML('afterend',`<button data-v='marks'>${D.mk}</button>`);
@@ -326,18 +333,10 @@ function show(v){
   document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));window.scrollTo(0,0)}
 
 const bname=e=>(e.name||'').trim()||mname(e.muscle);
-function snap(){const R=S.routine[wd(cur)]||[],g=S.log[key(cur)]||{};let done=0,total=0;insts(R).forEach(x=>{total+=x.e.sets;done+=Math.min((g[x.k]||{}).done||0,x.e.sets)});return{done,total,ex:R.map(e=>bname(e))}}
-const btn=(k,d,n,h)=>`<div class='pm${h?' h':''}'><button data-a='p' data-id='${k}'${d>=n?' disabled':''}>+</button><button data-a='m' data-id='${k}'${d<=0?' disabled':''}>−</button></div>`;
+
+
 const dts=(k,d,n)=>Array.from({length:n},(_,j)=>`<span class='dot${j<d?' on':''}${pulse&&pulse.id===k&&pulse.i===j?' pop':''}'>${j+1}</span>`).join('');
-function today(){
-  const lg=S.log[key(cur)]||{},R=S.routine[wd(cur)]||[];
-  $('date').textContent=fmt(cur);$('wd').textContent=DAYS[wd(cur)];$('cnt').textContent=insts(R).length+' '+D.ex;
-  $('list').innerHTML=R.length?R.map(e=>{
-    const n=e.sets,I=insts([e]).map(x=>({...x,d:Math.min((lg[x.k]||{}).done||0,n)})),one=I.length<2;
-    const body=I.map(x=>one?`<div class='dots'>${dts(x.k,x.d,n)}</div>`:`<div class='rw'><span class='rn'>${x.i+1}</span><div class='dots'>${dts(x.k,x.d,n)}</div>${btn(x.k,x.d,n,1)}</div>`).join('');
-    return `<article class='card${I.every(x=>x.d>=n)?' full':''}'><div class='top'><div><h3>${esc(bname(e))}</h3><div class='meta'><span class='tag'>${esc(mname(e.muscle))}</span><span class='am'>${e.reps} ${esc(uname(e.unit))}</span></div></div>${one?btn(I[0].k,I[0].d,n):''}</div>${body}</article>`}).join(''):`<p class='empty'>${D.fd}</p>`;
-  const c=S.days[key(cur)],b=$('comp');b.hidden=!R.length;b.className='primary'+(c?' ok':'');b.textContent=c?MO[c.mood-1].e+' '+D.cm+' '+D.mo[c.mood-1]:D.cd;
-}
+
 let lastF=null;
 function rMarks(){
   const F=folders();if(!F.some(f=>f.id===fold))fold=F.length?F[0].id:null;
@@ -355,6 +354,47 @@ $('mb').onchange=e=>{const v=e.target.value;if(!sel.size||!v)return;S.marks.forE
 $('mf').onwheel=e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){$('mf').scrollLeft+=e.deltaY;e.preventDefault()}};
 const BY={es:'Hecho por',en:'Made by',fr:'Fait par',de:'Gemacht von',pt:'Feito por',it:'Realizzato da'}[K];
 $('settings').insertAdjacentHTML('beforeend',`<p class='credit'>${BY}<br><b>Miguel Palarea García</b></p>`);
+
+const snap=()=>(S.routine[wd(cur)]||[]).map(e=>{const g=S.log[key(cur)]||{};return{n:bname(e),m:mname(e.muscle),u:uname(e.unit),s:e.sets,r:e.reps,d:insts([e]).map(x=>Math.min((g[x.k]||{}).done||0,e.sets))}});
+const btn=(k,d,n,h,ro)=>`<div class='pm${h?' h':''}'><button data-a='p' data-id='${k}'${ro||d>=n?' disabled':''}>+</button><button data-a='m' data-id='${k}'${ro||d<=0?' disabled':''}>−</button></div>`;
+function today(){
+  const k=key(cur),c=S.days[k],lg=S.log[k]||{},R=S.routine[wd(cur)]||[];
+  const C=c?c.ex.map(o=>({t:o.n,g:o.m,a:o.r+' '+o.u,n:o.s,d:o.d,k:o.d.map(()=>'')})):R.map(e=>{const I=insts([e]);return{t:bname(e),g:mname(e.muscle),a:e.reps+' '+uname(e.unit),n:e.sets,k:I.map(x=>x.k),d:I.map(x=>Math.min((lg[x.k]||{}).done||0,e.sets))}});
+  $('date').textContent=fmt(cur);$('wd').textContent=DAYS[wd(cur)];$('cnt').textContent=C.reduce((a,o)=>a+o.d.length,0)+' '+D.ex;
+  $('list').innerHTML=C.length?C.map(o=>{const one=o.d.length<2,ro=!!c;
+    const body=o.d.map((d,i)=>one?`<div class='dots'>${dts(o.k[i],d,o.n)}</div>`:`<div class='rw'><span class='rn'>${i+1}</span><div class='dots'>${dts(o.k[i],d,o.n)}</div>${btn(o.k[i],d,o.n,1,ro)}</div>`).join('');
+    return `<article class='card${o.d.every(d=>d>=o.n)?' full':''}'><div class='top'><div><h3>${esc(o.t)}</h3><div class='meta'><span class='tag'>${esc(o.g)}</span><span class='am'>${esc(o.a)}</span></div></div>${one?btn(o.k[0],o.d[0],o.n,0,ro):''}</div>${body}</article>`}).join(''):`<p class='empty'>${D.fd}</p>`;
+  const b=$('comp');b.hidden=!(c||C.length);b.className='primary'+(c?' ok':'');b.textContent=c?MO[c.mood-1].e+' '+D.cm+' '+D.mo[c.mood-1]:D.cd;
+}
+$('list').onclick=ev=>{const b=ev.target.closest('button');if(!b||b.disabled)return;
+  const x=insts(S.routine[wd(cur)]||[]).find(x=>x.k===b.dataset.id);if(!x)return;
+  const lg=S.log[key(cur)]=S.log[key(cur)]||{},l=lg[x.k]=lg[x.k]||{done:0};l.done=Math.min(l.done||0,x.e.sets);
+  if(b.dataset.a==='p'&&l.done<x.e.sets){l.done++;pulse={id:x.k,i:l.done-1}}
+  if(b.dataset.a==='m')l.done=Math.max(0,l.done-1);
+  saveLog();today();pulse=null};
+function hist(){const ks=Object.keys(S.days).sort().reverse();
+  $('hl').innerHTML=ks.length?ks.map(k=>{const d=S.days[k],m=MO[d.mood-1],dt=new Date(k+'T12:00:00');let a=0,t=0;d.ex.forEach(o=>o.d.forEach(x=>{a+=Math.min(x,o.s);t+=o.s}));
+    return `<button class='card hrow' data-k='${k}'><div class='hd'><b>${fmt(dt)}</b><small>${DAYS[wd(dt)]}</small></div><div class='hm'><span class='mj' style='background:${m.c}33'>${m.e}</span>${D.mo[d.mood-1]}</div><div class='hx'>${a}/${t} ${D.sr}${d.ex.length?': '+esc(d.ex.map(o=>o.n).join(', ')):''}</div>${d.note?`<div class='hx nt'>${esc(d.note)}</div>`:''}</button>`}).join(''):EMP}
+$('sv').onclick=()=>{const k=key(cur),o=S.days[k]||{ex:snap()};o.mood=pm;o.note=$('nt').value.trim();S.days[k]=o;delete S.log[k];save();saveLog();$('ov').hidden=true;today()};
+$('unc').onclick=()=>{const k=key(cur),c=S.days[k];if(c){const g=S.log[k]={},pool=c.ex.slice();(S.routine[wd(cur)]||[]).forEach(e=>{const t=[bname(e),mname(e.muscle),uname(e.unit),e.sets,e.reps].join('|'),j=pool.findIndex(o=>[o.n,o.m,o.u,o.s,o.r].join('|')===t);if(j<0)return;const o=pool.splice(j,1)[0];insts([e]).forEach((x,i)=>{if(o.d[i])g[x.k]={done:o.d[i]}})})}delete S.days[k];save();saveLog();$('ov').hidden=true;today()};
+$('fi').onchange=()=>{const f=$('fi').files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{let d;try{d=JSON.parse(r.result);if(d.app!=='gymcount'||!(d.days||(d.data&&d.data.routine)))throw 0}catch(e){alert(D.ie);return}
+    ask(D.iq,D.ix,D.ik,()=>{_off=1;['gc:data','gc:log','gymcount:v1'].forEach(k=>localStorage.removeItem(k));
+      if(d.v===2){const o=d.data;delete o.theme;delete o.ac;delete o.fs;localStorage.setItem('gymcount:v1',JSON.stringify(o))}
+      else{const l=d.log||{};delete d.app;delete d.log;localStorage.setItem('gc:data',JSON.stringify(d));localStorage.setItem('gc:log',JSON.stringify(l))}
+      location.reload()},1)};
+  r.readAsText(f);$('fi').value=''};
+$('rs').onclick=()=>ask(D.rq,D.rx,D.bd,()=>ask(D.rs2,D.rx2,D.bd,()=>{_off=1;['gc:data','gc:log','gc:ui','gymcount:v1'].forEach(k=>{try{localStorage.removeItem(k)}catch(e){}});location.reload()},1),1);
+function convOld(){const o=S._old;if(!o)return;delete S._old;
+  Object.keys(o.days||{}).forEach(k=>{const d=o.days[k],w=wd(new Date(k+'T12:00:00')),g=(o.log||{})[k]||{};
+    S.days[k]={mood:d.mood,note:d.note||'',ex:(S.routine[w]||[]).map(e=>({n:bname(e),m:mname(e.muscle),u:uname(e.unit),s:e.sets,r:e.reps,d:insts([e]).map(x=>Math.min((g[x.k]||{}).done||0,e.sets))}))}});
+  Object.keys(o.log||{}).forEach(k=>{if(!S.days[k])S.log[k]=o.log[k]});save()}
+let sx=0,sy=0,sOk=0;
+document.addEventListener('touchstart',e=>{const t=e.touches[0];sx=t.clientX;sy=t.clientY;sOk=e.touches.length===1&&sx>24&&sx<innerWidth-24&&!e.target.closest('input,select,textarea')},{passive:true});
+document.addEventListener('touchend',e=>{if(!sOk)return;sOk=0;const t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy;
+  if(Math.abs(dx)<70||Math.abs(dx)<Math.abs(dy)*1.5||!$('ov').hidden||!$('ov2').hidden)return;const n=dx<0?1:-1;
+  if(!$('today').hidden){cur.setDate(cur.getDate()+n);today()}else if(!$('routine').hidden){rd=(rd+n+7)%7;routine()}},{passive:true});
+convOld();
 lang();theme();show('today');
 </script>
 </body>
