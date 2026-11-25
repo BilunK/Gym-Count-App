@@ -1,8 +1,8 @@
 # Gym Count
 
-Estaba cansado de que en mitad de una serie, me quedara pensando "¿Esta es la segunda o tercera serie?", por eso hice esta App, para no tener que estar pensando en eso y centrarme en el ejercicio al completo, con esta aplicación podrás llevar el control de tus entrenamientos de gimnasio: planificas tu rutina de lunes a domingo, vas contando series durante el entreno, apuntas cómo te has sentido y sigues tu progreso. Todo es sencillo, rápido de usar con una mano y **se guarda solo en tu móvil**.
+App de Android para llevar el control de tus entrenamientos de gimnasio: planificas tu rutina de lunes a domingo, vas contando series durante el entreno, apuntas cómo te has sentido y sigues tu progreso. Todo es sencillo, rápido de usar con una mano y **se guarda solo en tu móvil**.
 
-<img width="2180" height="1676" alt="Sin título" src="https://github.com/user-attachments/assets/eaae7371-7a3e-48b0-8dd3-c3ec10f511c4" />
+> Hecho por Miguel Palarea García
 
 ## Qué aporta
 
@@ -12,6 +12,7 @@ Estaba cansado de que en mitad de una serie, me quedara pensando "¿Esta es la s
 - **Memoria de cómo te sientes.** Cierra cada día con un estado de ánimo y una nota opcional.
 - **Marcas personales por ejercicio.** Guarda tu peso o tiempo y consulta cómo has mejorado.
 - **Gráfica de progreso** para ver si llevas más días buenos que malos.
+- **Guía de ejercicios** para cada músculo, sin necesidad de máquinas concretas, con cómo hacerlos y cómo progresar.
 - **Copia de seguridad en .txt** para pasar tus datos a otro móvil.
 - **Personalizable:** 8 colores, modo claro/oscuro, tamaño de letra y listas de músculos y unidades editables.
 - **En tu idioma:** se adapta al del teléfono.
@@ -22,7 +23,7 @@ La navegación está en el menú de las tres rayas (arriba a la izquierda). El e
 
 ### Entrenamiento
 - Muestra el día elegido con su fecha y día de la semana. Las flechas ‹ › o **deslizar el dedo** a izquierda y derecha cambian de día, y tocar la fecha vuelve a hoy.
-- Cada ejercicio de tu rutina es una tarjeta con su nombre, el músculo y la cantidad (reps o min).
+- Cada ejercicio de tu rutina es una tarjeta con su nombre, el músculo y la cantidad (reps o min), con un dibujo minimalista del músculo de fondo.
 - Los **círculos son las series**. Con **+** cuentas una serie hecha y con **−** quitas la última.
 - Si un ejercicio tiene varias filas (por ejemplo, 3 ejercicios de pecho), salen en la misma tarjeta, numeradas 1, 2, 3.
 - Si dejas el nombre vacío en la rutina, se usa el nombre del músculo.
@@ -34,6 +35,7 @@ La navegación está en el menú de las tres rayas (arriba a la izquierda). El e
 - Una pestaña por día, de lunes a domingo.
 - Para cada ejercicio: nombre (opcional), músculo, número de ejercicios (1–10), series (1–20), cantidad (1–999) y unidad (*reps*, *min* o las que añadas).
 - Los cambios se guardan al momento. También puedes cambiar de día deslizando a izquierda o derecha.
+- **Mantén pulsado** un ejercicio para seleccionarlo, toca otros para añadirlos y bórralos con la papelera (con confirmación).
 
 ### Historial
 - Lista de los días que has completado, del más reciente al más antiguo.
@@ -43,8 +45,8 @@ La navegación está en el menú de las tres rayas (arriba a la izquierda). El e
 ### Marcas
 - Carpetas por músculo, que se deslizan con el dedo (en el mismo orden que tengas en los ajustes).
 - Cada ejercicio guarda un **peso (kg)** o un **tiempo (min)**, y muestra tu marca actual comparada con la anterior (↑ ↓ =).
-- Al tocar un ejercicio ves su **historial de marcas**, puedes añadir una nueva y borrar cualquiera individualmente.
-- **Mantén pulsado** para seleccionar varios: puedes moverlos a otra carpeta o borrarlos con la papelera (con confirmación).
+- Al tocar un ejercicio ves su **historial de marcas**, puedes añadir una nueva, cambiarle el nombre y borrar cualquiera individualmente.
+- **Mantén pulsado** para seleccionar varios: puedes moverlos a otra carpeta o borrarlos con la papelera (con confirmación). Sin soltar, arrastra una tarjeta para reordenarla.
 - Si borras un músculo, sus ejercicios pasan automáticamente a **Sin categoría**, una carpeta que solo aparece cuando tiene contenido.
 
 ### Progreso
@@ -52,13 +54,18 @@ La navegación está en el menú de las tres rayas (arriba a la izquierda). El e
 - Reparto de días buenos, regulares y malos, y media sobre 5.
 - Gráfica de línea con los últimos 14 días completados.
 
+### Guía
+- Se abre con el icono del cuaderno, a la izquierda del engranaje.
+- Carpetas por músculo y, para cada uno, 4 ejercicios que no dependen de una máquina concreta, con cómo hacerlos y cómo progresar (más repeticiones, más peso...).
+- Los músculos que crees tú no tienen recomendaciones.
+
 ### Ajustes
 - **Apariencia:** sistema, claro u oscuro.
 - **Color:** azul, morado, rosa, rojo, naranja, amarillo, verde o grafito.
 - **Tamaño de letra:** cuatro pasos, con un límite máximo para que nada se descuadre.
 - **Opciones avanzadas:**
-  - Músculos: renombrar, añadir, borrar y reordenar. De base vienen pecho, espalda, pierna, hombro, bíceps, tríceps, core, glúteo, cardio, antebrazo y gemelo.
-  - Unidades de medida: *reps* y *min* de base; puedes añadir, renombrar o borrar.
+  - Músculos: renombrar, añadir, borrar, reordenar arrastrando el icono ≡ y elegir la imagen que sale de fondo en Entrenamiento. De base vienen pecho, espalda, pierna, hombro, bíceps, tríceps, core, glúteo, cardio, antebrazo y gemelo.
+  - Unidades de medida: *reps* y *min* de base; puedes añadir, renombrar, borrar y reordenar arrastrando.
   - Exportar e importar una copia de todos tus datos en un archivo `.txt`.
   - Borrar todos los datos (botón rojo con doble confirmación) para dejar la app de fábrica.
 
@@ -72,7 +79,7 @@ Español, inglés, francés, alemán, portugués e italiano. La app usa el idiom
 2. Ábrelo. Android te pedirá permiso para instalar apps de fuera de la Play Store: acéptalo.
 3. Si aparece un aviso de Play Protect, pulsa **Instalar de todos modos**.
 
-**Al actualizar:** cada compilación se firma con una clave de depuración distinta, así que Android no deja instalar la nueva versión encima de la anterior. Antes de desinstalar, **exporta una copia** en *Ajustes → Opciones avanzadas* y después impórtala en la versión nueva.
+**Al actualizar:** la app se firma siempre con la misma clave, así que puedes instalar cada versión nueva encima de la anterior sin perder tus datos. Solo si cambias o pierdes la clave de firma habría que desinstalar; por eso conviene exportar una copia antes en *Ajustes → Opciones avanzadas*.
 
 ## Privacidad y datos
 
@@ -91,9 +98,35 @@ Español, inglés, francés, alemán, portugués e italiano. La app usa el idiom
 .
 ├── www/index.html                 La app completa
 ├── icono/res/                     Iconos de Android
+├── firma/keystore.enc             Clave de firma cifrada (se crea sola)
 ├── capacitor.config.json          Configuración de Capacitor
 ├── package.json                   Dependencias
 └── .github/workflows/android.yml  Compilación automática del APK
 ```
+
+## Compilar el APK
+
+**Con GitHub (sin instalar nada):**
+1. Sube estos archivos a un repositorio de tu cuenta.
+2. En **Settings → Secrets and variables → Actions** crea un secreto llamado `FIRMA_CLAVE` con una contraseña larga y guárdala en un lugar seguro. Protege la clave de firma de la app, que se genera sola en la primera compilación y se guarda cifrada en `firma/keystore.enc`.
+3. Entra en **Actions → Compilar APK → Run workflow**. Tarda unos 5–10 minutos.
+4. El APK queda en **Releases** (y también como *artifact* de la ejecución).
+
+**En tu ordenador** (necesitas Node 22, Java 21 y el SDK de Android):
+```bash
+npm install
+npx cap add android
+cp -r icono/res/. android/app/src/main/res/
+npx cap sync android
+cd android && ./gradlew assembleDebug
+```
+El archivo resultante está en `android/app/build/outputs/apk/debug/app-debug.apk`.
+
+## Limitaciones
+
+- Es un APK de depuración, pensado para uso personal. Para publicarla en la Play Store haría falta una versión firmada (AAB).
+- Solo Android. No hay versión para iPhone.
+
+---
 
 Hecho por **Miguel Palarea García**

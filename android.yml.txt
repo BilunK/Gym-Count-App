@@ -16,11 +16,36 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
+      - name: Firma estable
+        env:
+          FIRMA_CLAVE: ${{ secrets.FIRMA_CLAVE }}
+        run: |
+          [ -n "$FIRMA_CLAVE" ] || { echo "Falta el secreto FIRMA_CLAVE (Settings > Secrets and variables > Actions)"; exit 1; }
+          mkdir -p ~/.android
+          if [ -f firma/keystore.enc ]; then
+            openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 -pass env:FIRMA_CLAVE -in firma/keystore.enc -out ~/.android/debug.keystore
+          else
+            keytool -genkeypair -keystore ~/.android/debug.keystore -storepass android -keypass android -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 36500 -dname "CN=Miguel Palarea Garcia"
+            mkdir -p firma
+            openssl enc -aes-256-cbc -pbkdf2 -iter 200000 -pass env:FIRMA_CLAVE -in ~/.android/debug.keystore -out firma/keystore.enc
+            git config user.name "github-actions"
+            git config user.email "github-actions@users.noreply.github.com"
+            git add firma/keystore.enc
+            git commit -m "Guardar clave de firma cifrada"
+            git push
+          fi
       - run: npm install
       - run: npx cap add android
-      - name: Icono de la app
+      - name: Numero de version
+        run: sed -i "s/versionCode 1/versionCode ${{ github.run_number }}/" android/app/build.gradle
+      - name: Icono y pantalla de inicio
         run: |
-          if [ -d icono/res ]; then cp -r icono/res/. android/app/src/main/res/; fi
+          R=android/app/src/main/res
+          if [ -d icono/res ]; then cp -r icono/res/. $R/; fi
+          sed -i 's#@drawable/splash#@color/gc_bg#' $R/values/styles.xml
+          sed -i '/name="AppTheme.NoActionBarLaunch"/a\        <item name="windowSplashScreenAnimatedIcon">@drawable/gc_splash_icon</item>' $R/values/styles.xml
+          sed -i '/name="AppTheme.NoActionBarLaunch"/a\        <item name="windowSplashScreenBackground">@color/gc_bg</item>' $R/values/styles.xml
+          sed -i '/name="AppTheme.NoActionBar"/a\        <item name="android:windowBackground">@color/gc_bg</item>' $R/values/styles.xml
       - run: npx cap sync android
       - run: chmod +x gradlew && ./gradlew assembleDebug
         working-directory: android
