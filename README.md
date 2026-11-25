@@ -21,18 +21,19 @@ App de Android para llevar el control de tus entrenamientos de gimnasio: planifi
 La navegación está en el menú de las tres rayas (arriba a la izquierda). El engranaje (arriba a la derecha) abre los ajustes.
 
 ### Entrenamiento
-- Muestra el día elegido con su fecha y día de la semana. Las flechas ‹ › cambian de día y tocar la fecha vuelve a hoy.
+- Muestra el día elegido con su fecha y día de la semana. Las flechas ‹ › o **deslizar el dedo** a izquierda y derecha cambian de día, y tocar la fecha vuelve a hoy.
 - Cada ejercicio de tu rutina es una tarjeta con su nombre, el músculo y la cantidad (reps o min).
 - Los **círculos son las series**. Con **+** cuentas una serie hecha y con **−** quitas la última.
 - Si un ejercicio tiene varias filas (por ejemplo, 3 ejercicios de pecho), salen en la misma tarjeta, numeradas 1, 2, 3.
 - Si dejas el nombre vacío en la rutina, se usa el nombre del músculo.
 - El **lápiz** te lleva a editar la rutina de ese día.
 - **Completar día:** un popup centrado te pide cómo te has sentido (*Horrible, Mal, Regular, Bien, Excelente*) y una nota opcional. Puedes cambiarlo o quitarlo después.
+- **Los días completados quedan congelados:** se guardan los ejercicios que hiciste ese día y no les afectan los cambios posteriores de la rutina. Solo se pueden modificar si deshaces el día completado desde ese mismo día.
 
 ### Mi rutina
 - Una pestaña por día, de lunes a domingo.
 - Para cada ejercicio: nombre (opcional), músculo, número de ejercicios (1–10), series (1–20), cantidad (1–999) y unidad (*reps*, *min* o las que añadas).
-- Los cambios se guardan al momento.
+- Los cambios se guardan al momento. También puedes cambiar de día deslizando a izquierda o derecha.
 
 ### Historial
 - Lista de los días que has completado, del más reciente al más antiguo.
@@ -77,7 +78,8 @@ Español, inglés, francés, alemán, portugués e italiano. La app usa el idiom
 
 - No hay servidores, cuentas ni análisis de uso. Nada sale de tu móvil.
 - Los datos se guardan dentro de la app. Si la desinstalas o borras sus datos, se pierden; por eso existe la copia de seguridad en `.txt`.
-- La copia incluye rutina, historial, marcas, músculos, unidades y ajustes.
+- La copia incluye rutina, historial, marcas, músculos y unidades. **No incluye la apariencia** (color, modo claro/oscuro, tamaño de letra), que se queda como la tengas en cada móvil.
+- El guardado es compacto: fechas como números, ejercicios repetidos guardados una sola vez y datos en listas sin nombres de campo. Ocupa unos 20 KB por cada año de entrenamiento (en torno a 90 bytes por día), así que años de historial caben de sobra.
 
 ## Cómo está hecha
 
