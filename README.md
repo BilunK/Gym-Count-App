@@ -4,6 +4,8 @@ Estaba cansado de que en mitad de una serie, me quedara pensando "¿Esta es la s
 
 > Hecho por Miguel Palarea García
 
+<img width="2180" height="1676" alt="Sin título" src="https://github.com/user-attachments/assets/eaae7371-7a3e-48b0-8dd3-c3ec10f511c4" />
+
 ## Qué aporta
 
 - **Sin cuentas, sin internet, sin anuncios.** Todos los datos se quedan en tu teléfono.
