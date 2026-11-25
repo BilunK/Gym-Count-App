@@ -2,8 +2,7 @@
 
 App de Android para llevar el control de tus entrenamientos de gimnasio: planificas tu rutina de lunes a domingo, vas contando series durante el entreno, apuntas cómo te has sentido y sigues tu progreso. Todo es sencillo, rápido de usar con una mano y **se guarda solo en tu móvil**.
 
-<img width="1200" height="1900" alt="Sin título2" src="https://github.com/user-attachments/assets/1d1479f2-258f-40cb-8073-511307ba5bae" />
-
+<img width="2180" height="1676" alt="Sin título" src="https://github.com/user-attachments/assets/9df98144-fdd6-47ca-b121-7f64dff30d45" />
 
 ## Qué aporta
 
